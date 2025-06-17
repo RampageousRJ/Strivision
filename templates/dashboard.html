@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strivision Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 300;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      align-items: start;
+      grid-template-rows: 1fr;
+    }
+
+    .main-question-card {
+      background: rgba(15, 12, 41, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      height: 100%;
+    }
+
+    .side-card {
+      background: rgba(15, 12, 41, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-title i {
+      color: #00bfff;
+    }
+
+    #question-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #00bfff;
+      margin-bottom: 2rem;
+      line-height: 1.3;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .resource-link {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-height: 100px;
+      justify-content: center;
+    }
+
+    .resource-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .resource-link i {
+      font-size: 1.8rem;
+      color: #00bfff;
+    }
+
+    .resource-link span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .checkbox-section {
+      margin: 2rem 0;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #64b5f6;
+      cursor: pointer;
+    }
+
+    .checkbox-container label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .submit-btn {
+      background: linear-gradient(45deg, #64b5f6, #42a5f5);
+      color: #fff;
+      padding: 1rem 3rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 20px rgba(100, 181, 246, 0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(100, 181, 246, 0.4);
+      background: linear-gradient(45deg, #42a5f5, #1e88e5);
+    }
+
+    .potd-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .potd-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .potd-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(4px);
+    }
+
+    .potd-link i {
+      color: #00ff88;
+      font-size: 1.2rem;
+    }
+
+    .stats-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .sheet-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #fff;
+      min-width: 80px;
+      text-align: left;
+    }
+
+    .progress-bar {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00bfff, #1e90ff);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .percentage {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #00bfff;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .social-icons a {
+      color: #fff;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      color: #64b5f6;
+      transform: translateY(-2px);
+    }
+
+    .copyright {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .copyright a {
+      color: #64b5f6;
+      text-decoration: none;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 3rem;
+      border-radius: 24px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .modal-content p {
+      font-size: 1.3rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      color: #fff;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: background 0.3s ease;
+    }
+
+    .close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .links-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      header h1 {
+        font-size: 2rem;
+      }
+      
+      .main-question-card {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Welcome, {{ username }}!</h1>
+    <p>Complete today's Striver question by exploring the resources and marking it solved.</p>
+  </header>
+
+  <main>
+    <div class="dashboard-container">
+      <div class="main-question-card">
+        <div>
+          <h2 id="question-title">Loading today's question...</h2>
+          <div class="links-grid" id="links-list">
+            <div>Loading links...</div>
+          </div>
+        </div>
+        
+        <div class="checkbox-section">
+          <div class="checkbox-container">
+            <input type="checkbox" id="solved-checkbox">
+            <label for="solved-checkbox">I have solved this question</label>
+          </div>
+          <button class="submit-btn" onclick="submitStatus()">Submit Progress</button>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="side-card">
+          <h3 class="card-title">
+            <i class="fas fa-calendar-day"></i>
+            Problem of the Day
+          </h3>
+          <div class="potd-links">
+            <a href="{{ gfg_link }}" target="_blank" class="potd-link">
+              <i class="fas fa-code"></i>
+              <span>GFG POTD</span>
+            </a>
+            <a href="{{ leetcode_link }}" target="_blank" class="potd-link">
+              <i class="fas fa-laptop-code"></i>
+              <span>LeetCode POTD</span>
+            </a>
+            <a href="{{ hackerearth_link }}" target="_blank" class="potd-link">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>HackerEarth POTD</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <h3 class="card-title">
+            <i class="fas fa-chart-line"></i>
+            Striver Statistics
+          </h3>
+          <div class="stats-container">
+            <!-- Sample data for demonstration -->
+            <div class="stat-item">
+              <span class="sheet-name">Sheet SDE</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 30%;"></div>
+              </div>
+              <span class="percentage">30%</span>
+            </div>
+            <div class="stat-item">
+              <span class="sheet-name">Sheet A2Z</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 77%;"></div>
+              </div>
+              <span class="percentage">77%</span>
+            </div>
+            <div class="stat-item">
+              <span class="sheet-name">Sheet 79</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 77%;"></div>
+              </div>
+              <span class="percentage">77%</span>
+            </div>
+            <div class="stat-item">
+              <span class="sheet-name">Blind 75</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 44%;"></div>
+              </div>
+              <span class="percentage">44%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="congrats-modal" class="modal" onclick="this.style.display='none'">
+    <div class="modal-content">
+      <span class="close" onclick="document.getElementById('congrats-modal').style.display='none'">&times;</span>
+      <p>🎉 Congratulations on solving today's challenge! 🎉</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social-icons">
+      <a href="https://twitter.com/Rishabh46375707" target="_blank"><i class="fab fa-twitter"></i></a>
+      <a href="https://www.instagram.com/rishabhjain.pdf/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://github.com/RampageousRJ" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/rishabh-jain-391466248" target="_blank"><i class="fab fa-linkedin"></i></a>
+    </div>
+    <div class="copyright">
+      © 2025 Copyright: <a href="mailto:automailer.0123@gmail.com">strivision.com</a>
+    </div>
+  </footer>
+
+  <script>
+    function getStableRandomIndex(length) {
+      const today = new Date().toISOString().slice(0, 10);
+      const seed = today.split('-').join('');
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        hash = (hash * 10 + seed.charCodeAt(i)) % length;
+      }
+      return hash;
+    }
+
+    fetch("{{ url_for('static', filename='json/user_data.json') }}")
+      .then((response) => response.json())
+      .then((questions) => {
+        // Pick today’s question
+        const index = getStableRandomIndex(questions.length);
+        const q = questions[index];
+
+        // Render title
+        document.getElementById('question-title').textContent = q.title;
+
+        // Render resource links
+        const linksList = document.getElementById('links-list');
+        linksList.innerHTML = '';
+
+        const links = [
+          { label: 'LeetCode', icon: 'fas fa-code', url: q.leetcode_link },
+          { label: 'YouTube Video', icon: 'fab fa-youtube', url: q.youtube_link },
+          { label: 'Editorial', icon: 'fas fa-lightbulb', url: q.striver_editorial_link },
+          { label: 'Striver Article', icon: 'fas fa-newspaper', url: q.striver_link }
+        ];
+
+        links.forEach((item) => {
+          if (item.url) {
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.target = '_blank';
+            a.className = 'resource-link';
+            a.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
+            linksList.appendChild(a);
+          }
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        document.getElementById('links-list').innerHTML = '<p>Unable to load resources.</p>';
+      });
+
+    
+
+    function submitStatus() {
+      const checkbox = document.getElementById('solved-checkbox');
+      const modal = document.getElementById('congrats-modal');
+      if (checkbox.checked) {
+        modal.style.display = 'flex';
+      } else {
+        alert("Please check the box if you've solved the question!");
+      }
+    }
+  </script>
+</body>
+
+</html>
