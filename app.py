@@ -67,4 +67,4 @@ def dashboard():
     return render_template('dashboard.html', username=username, leetcode_link=leetcode_link, gfg_link=gfg_link, user_stats=user_stats, hackerearth_link=hackerearth_link)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True)
