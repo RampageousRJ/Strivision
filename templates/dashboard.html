@@ -41,6 +41,7 @@
       background: rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
     }
 
     header h1 {
@@ -55,6 +56,39 @@
       font-size: 1.1rem;
       color: rgba(255, 255, 255, 0.9);
       font-weight: 300;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .logout-btn i {
+      font-size: 1rem;
+      color: #ff6b6b;
     }
 
     main {
@@ -378,6 +412,21 @@
       transition: background 0.3s ease;
     }
 
+    #placeholder-text {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 1rem;
+    }
+
+    #placeholder-text a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    #placeholder-text a:hover {
+      color: #348daa;
+    }
+
     .close:hover {
       background: rgba(255, 255, 255, 0.2);
     }
@@ -399,12 +448,29 @@
       .main-question-card {
         padding: 2rem;
       }
+
+      .logout-btn {
+        position: static;
+        margin: 1rem auto 0;
+        display: flex;
+        width: fit-content;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
 
 <body>
   <header>
+    <a href="{{ url_for('logout') }}" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Logout</span>
+    </a>
     <h1>Welcome, {{ username }}!</h1>
     <p>Complete today's Striver question by exploring the resources and marking it solved.</p>
   </header>
@@ -412,6 +478,7 @@
   <main>
     <div class="dashboard-container">
       <div class="main-question-card">
+        {% if user_data|length > 0 %}
         <div>
           <h2 id="question-title">Loading today's question...</h2>
           <div class="links-grid" id="links-list">
@@ -426,6 +493,16 @@
           </div>
           <button class="submit-btn" onclick="submitStatus()">Submit Progress</button>
         </div>
+
+        {% else %}
+        <div>
+          <h2 id="question-title">No questions available today!</h2>
+          <p id="placeholder-text">No questions have been starred. Check out the <a href="https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/" target="_blank">A2Z DSA Sheet</a> and star the questions to come back later and practice them in a POTD fashion!</p>
+          <img src="https://imgflip.com/s/meme/Sad-Pablo-Escobar.jpg" alt="meme" style="max-width: 50%; padding: 5% 0 5% 0;">
+        </div>
+
+        {% endif %}
+
       </div>
 
       <div class="sidebar">
@@ -460,30 +537,30 @@
             <div class="stat-item">
               <span class="sheet-name">Sheet SDE</span>
               <div class="progress-bar">
-                <div class="progress-fill" style="width: 30%;"></div>
+                <div class="progress-fill" style="width: {{ user_stats['sheet_sde']['percentage'] }}%;"></div>
               </div>
-              <span class="percentage">30%</span>
+              <span class="percentage">{{ user_stats['sheet_sde']['percentage'] }}%</span>
             </div>
             <div class="stat-item">
               <span class="sheet-name">Sheet A2Z</span>
               <div class="progress-bar">
-                <div class="progress-fill" style="width: 77%;"></div>
+                <div class="progress-fill" style="width: {{ user_stats['sheet_a2z']['percentage'] }}%;"></div>
               </div>
-              <span class="percentage">77%</span>
+              <span class="percentage">{{ user_stats['sheet_a2z']['percentage'] }}%</span>
             </div>
             <div class="stat-item">
               <span class="sheet-name">Sheet 79</span>
               <div class="progress-bar">
-                <div class="progress-fill" style="width: 77%;"></div>
+                <div class="progress-fill" style="width: {{ user_stats['sheet_79']['percentage'] }}%;"></div>
               </div>
-              <span class="percentage">77%</span>
+              <span class="percentage">{{ user_stats['sheet_79']['percentage'] }}%</span>
             </div>
             <div class="stat-item">
               <span class="sheet-name">Blind 75</span>
               <div class="progress-bar">
-                <div class="progress-fill" style="width: 44%;"></div>
+                <div class="progress-fill" style="width: {{ user_stats['blind_75']['percentage'] }}%;"></div>
               </div>
-              <span class="percentage">44%</span>
+              <span class="percentage">{{ user_stats['blind_75']['percentage'] }}%</span>
             </div>
           </div>
         </div>
@@ -516,49 +593,37 @@
       const seed = today.split('-').join('');
       let hash = 0;
       for (let i = 0; i < seed.length; i++) {
-        hash = (hash * 10 + seed.charCodeAt(i)) % length;
+        hash = (hash * 31 + seed.charCodeAt(i)) % length;
       }
       return hash;
     }
 
-    fetch("{{ url_for('static', filename='json/user_data.json') }}")
-      .then((response) => response.json())
-      .then((questions) => {
-        // Pick today’s question
-        const index = getStableRandomIndex(questions.length);
-        const q = questions[index];
+    const questions = {{ user_data | tojson }};
+    const index = getStableRandomIndex(questions.length);
+    const q = questions[index];
 
-        // Render title
-        document.getElementById('question-title').textContent = q.title;
+    document.getElementById('question-title').textContent = q.title;
 
-        // Render resource links
-        const linksList = document.getElementById('links-list');
-        linksList.innerHTML = '';
+    const linksList = document.getElementById('links-list');
+    linksList.innerHTML = '';
 
-        const links = [
-          { label: 'LeetCode', icon: 'fas fa-code', url: q.leetcode_link },
-          { label: 'YouTube Video', icon: 'fab fa-youtube', url: q.youtube_link },
-          { label: 'Editorial', icon: 'fas fa-lightbulb', url: q.striver_editorial_link },
-          { label: 'Striver Article', icon: 'fas fa-newspaper', url: q.striver_link }
-        ];
+    const links = [
+      { label: 'LeetCode', icon: 'fas fa-code', url: q.leetcode_link },
+      { label: 'YouTube Video', icon: 'fab fa-youtube', url: q.youtube_link },
+      { label: 'Editorial', icon: 'fas fa-lightbulb', url: q.striver_editorial_link },
+      { label: 'Striver Article', icon: 'fas fa-newspaper', url: q.striver_link }
+    ];
 
-        links.forEach((item) => {
-          if (item.url) {
-            const a = document.createElement('a');
-            a.href = item.url;
-            a.target = '_blank';
-            a.className = 'resource-link';
-            a.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
-            linksList.appendChild(a);
-          }
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        document.getElementById('links-list').innerHTML = '<p>Unable to load resources.</p>';
-      });
-
-    
+    links.forEach((item) => {
+      if (item.url) {
+        const a = document.createElement('a');
+        a.href = item.url;
+        a.target = '_blank';
+        a.className = 'resource-link';
+        a.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
+        linksList.appendChild(a);
+      }
+    });    
 
     function submitStatus() {
       const checkbox = document.getElementById('solved-checkbox');

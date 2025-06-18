@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for,flash, session
+from flask import Flask, render_template, request, redirect, url_for,flash, session, g
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 from striver import get_login_token, get_entire_sheet, get_starred_questions, fetch_user_data, get_user_stats
 from potd import get_leetcode_daily_challenge, get_gfg_daily_challenge, get_hackerearth_daily_challenge
 import re
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -19,6 +20,20 @@ def validEmail(email_text):
         return True
     return False
 
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    if hasattr(g, 'start_time'):
+        elapsed_time = time.time() - g.start_time
+        # You can log this time or add it to the response headers
+        print(f"Request to {request.path} took {elapsed_time:.4f} seconds")
+        # Example: Add to response headers
+        response.headers["X-Page-Load-Time"] = f"{elapsed_time:.4f}s"
+    return response
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     form = LoginForm()
@@ -31,10 +46,6 @@ def home():
             session['token'] = token
             session['username'] = username
             session['email'] = email
-            get_entire_sheet(email, token)
-            get_starred_questions(email, token)
-            fetch_user_data()
-
         except Exception as e:
             print(f"Error during login: {e}")
             flash('Invalid email or password. Please try again or visit <a href="https://takeuforward.org/login" style="text-decoration:none;">this website</a> to generate credentials.', 'danger')
@@ -57,6 +68,7 @@ def dashboard():
         gfg_link = get_gfg_daily_challenge()
         hackerearth_link = get_hackerearth_daily_challenge()
         user_stats = get_user_stats(username, token)
+        user_data = fetch_user_data(email, token)
         if not leetcode_link or not gfg_link:
             flash('Could not fetch daily challenges. Please try again later.', 'warning')
             leetcode_link = gfg_link = None
@@ -64,7 +76,14 @@ def dashboard():
         flash(f'Error fetching data: {str(e)}', 'danger')
         return redirect(url_for('home'))
 
-    return render_template('dashboard.html', username=username, leetcode_link=leetcode_link, gfg_link=gfg_link, user_stats=user_stats, hackerearth_link=hackerearth_link)
+    return render_template('dashboard.html', username=username, leetcode_link=leetcode_link, gfg_link=gfg_link, user_stats=user_stats, hackerearth_link=hackerearth_link, user_data=user_data)
+
+@app.route('/logout')
+def logout():
+    session.pop('token', None)
+    session.pop('username', None)
+    session.pop('email', None)
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)

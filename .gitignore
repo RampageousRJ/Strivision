@@ -1,3 +1,4 @@
 __pycache__
-static/json
+starred_questions.json
+user_data.json
 virt

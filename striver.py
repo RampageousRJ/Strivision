@@ -40,10 +40,10 @@ def get_entire_sheet(email, token):
         "email": email
     }
 
-    response = requests.get(url, headers=headers, cookies=cookies, json=payload)
+    response = requests.get(url, headers=headers, cookies=cookies, json=payload).json()
 
     with open(os.path.join(os.getcwd(),"static","json","striver_sheet.json"), "w") as file:
-        file.write(response.text)
+        json.dump(response, file, indent=4)
 
 def get_starred_questions(email, token):
     url = "https://backend.takeuforward.org/api/profile/get/revision"
@@ -61,15 +61,13 @@ def get_starred_questions(email, token):
         "email": email
     }
 
-    response = requests.post(url, headers=headers, cookies=cookies, json=payload)
+    response = requests.post(url, headers=headers, cookies=cookies, json=payload).json()
+    return response
 
-    with open(os.path.join(os.getcwd(),"static","json","starred_questions.json"), "w") as file:
-        file.write(response.text)
-
-def fetch_user_data():
+def fetch_user_data(email, token):
     user_data = []
     data = json.loads(open(os.path.join(os.getcwd(),"static","json","striver_sheet.json"), "r").read())
-    starred_questions = json.loads(open(os.path.join(os.getcwd(),"static","json","starred_questions.json"), "r").read())['result']
+    starred_questions = get_starred_questions(email ,token)['result']
     for item in data:
         for steps in item.get('sub_steps'):
             for topic in steps.get('topics'):
@@ -82,8 +80,9 @@ def fetch_user_data():
                         'striver_editorial_link': topic['editorial_link'],
                         'difficulty': topic['difficulty']
                     })
-    with open(os.path.join(os.getcwd(),"static","json","user_data.json"), "w") as file:
-        json.dump(user_data, file, indent=4)
+    return user_data
+    # with open(os.path.join(os.getcwd(),"static","json","user_data.json"), "w") as file:
+    #     json.dump(user_data, file, indent=4)
 
 def get_user_stats(username, token):
     url = f"https://backend.takeuforward.org/api/profile/user/progress/{username}"
@@ -109,7 +108,7 @@ if __name__ == "__main__":
         token, username = get_login_token(email, password)
         # get_entire_sheet(email, token)
         # get_starred_questions(email, token)
-        # fetch_user_data()
-        get_user_stats(username, token)
+        fetch_user_data(email,token)
+        # get_user_stats(username, token)
     except Exception as e:
         print("Error:", e)
