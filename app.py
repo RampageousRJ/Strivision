@@ -73,6 +73,7 @@ def dashboard():
             flash('Could not fetch daily challenges. Please try again later.', 'warning')
             leetcode_link = gfg_link = None
     except Exception as e:
+        print(f"Error fetching data: {e}")
         flash(f'Error fetching data: {str(e)}', 'danger')
         return redirect(url_for('home'))
 

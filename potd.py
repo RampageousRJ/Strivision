@@ -115,8 +115,12 @@ def get_hackerearth_daily_challenge():
         "_ga_18S5HG42RB": "GS2.1.s1750179835$o1$g1$t1750179848$j47$l0$h1184859511",
     }
 
-    response = requests.get(url, headers=headers, cookies=cookies).json()
-    return "https://www.hackerearth.com" + response['url']
+    try:
+        response = requests.get(url, headers=headers, cookies=cookies).json()
+        return "https://www.hackerearth.com" + response['url']
+    except Exception as e:
+        print(f"Error fetching HackerEarth daily challenge: {e}")
+        return None
 
 if __name__=='__main__':
     print(get_leetcode_daily_challenge())
