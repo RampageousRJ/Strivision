@@ -33,10 +33,10 @@ deployOCI:
         - eval $(ssh-agent -s)
         - ssh-add .ssh/id_rsa
         - ssh -o StrictHostKeyChecking=no -i .ssh/id_rsa ${VM_USER}@${VM_IP_ADDRESS} '
-                rm -rf Strivision
-                git clone https://github.com/RampageousRJ/Strivision.git
-                cd Strivision
-                pm2 delete strivision
+                rm -rf Strivision &&
+                git clone https://github.com/RampageousRJ/Strivision.git &&
+                cd Strivision &&
+                pm2 delete strivision &&
                 pm2 start "python3 app.py" --name strivision
             '
     only:
