@@ -22,3 +22,22 @@ syncGithub:
         - git push github main
     only:
         - main
+
+deployOCI:
+    stage: deploy
+    script:
+        - 'which ssh-agent || (apt-get update -y && apt-get install openssh-client zip unzip -y)'
+        - mkdir -p .ssh
+        - echo "$SSH_PRIVATE_KEY" > .ssh/id_rsa
+        - chmod 600 .ssh/id_rsa
+        - eval $(ssh-agent -s)
+        - ssh-add .ssh/id_rsa
+        - ssh -o StrictHostKeyChecking=no -i .ssh/id_rsa ${VM_USER}@${VM_IP_ADDRESS} '
+                rm -rf Strivision
+                git clone https://github.com/RampageousRJ/Strivision.git
+                cd Strivision
+                pm2 delete strivision
+                pm2 start "python3 app.py" --name strivision
+            '
+    only:
+        - main
