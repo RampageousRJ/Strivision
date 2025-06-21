@@ -49,7 +49,7 @@ checkSanity:
     before_script:  apt-get update && apt-get install -y curl
     script:
         - echo "Running sanity check..."
-        - STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${VM_IP_ADDRESS}:${VM_APP_PORT}/health)
+        - STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${STRIVISION_URL}/health)
         - |
             if [ "$STATUS" -ne 200 ]; then
                 echo "Sanity check failed! Expected 200, got $STATUS"
