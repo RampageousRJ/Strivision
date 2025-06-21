@@ -14,9 +14,9 @@ syncGithub:
     stage: sync
     script:
         - apt-get update && apt-get install -y git
-        - git config --global user.name "{GITHUB_USERNAME}"
-        - git config --global user.email "{GITHUB_EMAIL}"
-        - git remote add github https://{GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/{GITHUB_USERNAME}/Strivision.git
+        - git config --global user.name "${GITHUB_USERNAME}"
+        - git config --global user.email "${GITHUB_EMAIL}"
+        - git remote add github https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/Strivision.git
         - git checkout -B main origin/main
         - git remote -v
         - git push github main
