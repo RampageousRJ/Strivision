@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for,flash, sess
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
-from striver import get_login_token, get_entire_sheet, get_starred_questions, fetch_user_data, get_user_stats
-from potd import get_leetcode_daily_challenge, get_gfg_daily_challenge, get_hackerearth_daily_challenge
+from striver import get_login_token, fetch_user_data, get_user_stats, unstar_question
+from potd import get_leetcode_daily_challenge, get_gfg_daily_challenge
 import re
 import time
 
@@ -66,18 +66,35 @@ def dashboard():
     try:
         leetcode_link = get_leetcode_daily_challenge()
         gfg_link = get_gfg_daily_challenge()
-        hackerearth_link = get_hackerearth_daily_challenge()
         user_stats = get_user_stats(username, token)
         user_data = fetch_user_data(email, token)
         if not leetcode_link or not gfg_link:
-            flash('Could not fetch daily challenges. Please try again later.', 'warning')
-            leetcode_link = gfg_link = None
+            print('Could not fetch daily challenges. Please try again later.', 'warning')
     except Exception as e:
         print(f"Error fetching data: {e}")
         flash(f'Error fetching data: {str(e)}', 'danger')
         return redirect(url_for('home'))
 
-    return render_template('dashboard.html', username=username, leetcode_link=leetcode_link, gfg_link=gfg_link, user_stats=user_stats, hackerearth_link=hackerearth_link, user_data=user_data)
+    return render_template('dashboard.html', username=username, leetcode_link=leetcode_link, gfg_link=gfg_link, user_stats=user_stats, user_data=user_data)
+
+@app.route('/unstar', methods=['POST'])
+def unstar():
+    if 'token' not in session or 'email' not in session:
+        flash('You need to log in first.', 'warning')
+        return redirect(url_for('home'))
+    
+    token = session['token']
+    email = session['email']
+    question_id = request.form.get('question_id')
+    try:
+        success = unstar_question(token, email, question_id)
+        if success:
+            print(f'Question {question_id} has been successfully unstared.', 'success')
+        else:
+            print(f'Failed to unstar question {question_id}.', 'danger')
+    except Exception as e:
+        print(f"Error unstarring question {question_id}: {e}")
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():

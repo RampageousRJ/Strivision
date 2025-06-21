@@ -73,6 +73,7 @@ def fetch_user_data(email, token):
             for topic in steps.get('topics'):
                 if topic['id'] in starred_questions:
                     user_data.append({
+                        'id' : topic['id'],
                         'title': topic['question_title'],
                         'striver_link': topic['post_link'],
                         'youtube_link': topic['yt_link'],
@@ -81,8 +82,6 @@ def fetch_user_data(email, token):
                         'difficulty': topic['difficulty']
                     })
     return user_data
-    # with open(os.path.join(os.getcwd(),"static","json","user_data.json"), "w") as file:
-    #     json.dump(user_data, file, indent=4)
 
 def get_user_stats(username, token):
     url = f"https://backend.takeuforward.org/api/profile/user/progress/{username}"
@@ -100,6 +99,31 @@ def get_user_stats(username, token):
             raise Exception("Failed to fetch user stats: " + response.text)
     except requests.RequestException as e:
         raise Exception(f"Request failed: {e}")
+    
+def unstar_question(token, email, question_id):
+    url = "https://backend.takeuforward.org/api/profile/update/revision"
+
+    headers = common_headers
+
+    cookies = {
+        "_ga": "GA1.1.345481477.1750156769",
+        "_ga_51P1R4XNJ0": "GS2.1.s1750485247$o10$g1$t1750485251$j56$l0$h0",
+        "takeuforward": token,
+        "undefined": '""'
+    }
+
+    payload = {
+        "email": email,
+        "q_id": question_id,
+        "q_data": 0
+    }
+
+    try:
+        response = requests.put(url, headers=headers, cookies=cookies, json=payload).json()
+        return response['success']
+    except Exception as e:
+        print(f"Error unstarring question {question_id}: {e}")
+        return False
 
 if __name__ == "__main__":
     email = os.getenv('STRIVER_EMAIL')
@@ -107,8 +131,8 @@ if __name__ == "__main__":
     try:
         token, username = get_login_token(email, password)
         # get_entire_sheet(email, token)
-        # get_starred_questions(email, token)
-        fetch_user_data(email,token)
+        unstar_question(token, email, 'implmnttri2prfixtr')
+        # fetch_user_data(email,token)
         # get_user_stats(username, token)
     except Exception as e:
         print("Error:", e)

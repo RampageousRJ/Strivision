@@ -32,6 +32,7 @@ Strivision integrates with your credentials from **[takeuforward.org](https://ta
 
 * Personalized POTD (Problem of the Day) from Striver sheets.
 * ⭐ Revisit starred questions to practice and revise.
+* ♻️ Unstar and move to next question on the go.
 * 📊 Track solved/unsolved stats across all sheets.
 * 📅 Maintain consistency with daily question selection.
 * 📱 Responsive UI with intuitive layout.
@@ -76,6 +77,6 @@ Once running, access the app locally at: [http://localhost:5000](http://localhos
 * Log in with your email and password as configured via [takeuforward.org](https://takeyouforward.org).
 * Use the **Need Help?** popup to access clear login instructions.
 * Click the ⭐ to star/unstar any question on the [takeuforward.org](https://takeyouforward.org) website from any sheet and add them to the list of probable starred questions.
-* Navigate through the dashboard to track progress, view Daily Problem Of The Day from multiple coding platforms like Leetcode, GeeksForGeeks and HackerEarth and one from your Striver starred questions.
+* Navigate through the dashboard to track progress, view Daily Problem Of The Day from multiple coding platforms like Leetcode, GeeksForGeeks and Coding Ninjas and one from your Striver starred questions.
 
 ---

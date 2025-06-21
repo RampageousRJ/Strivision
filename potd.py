@@ -85,45 +85,8 @@ def get_gfg_daily_challenge():
     except Exception as e:
         print(f"Error fetching GFG daily challenge: {e}")
         return None
-    
-def get_hackerearth_daily_challenge():
-    url = "https://www.hackerearth.com/practice/api/practice-problem-day/"
-
-    headers = {
-        "accept": "*/*",
-        "accept-language": "en-US,en;q=0.9,ar;q=0.8,es;q=0.7",
-        "priority": "u=1, i",
-        "referer": "https://www.hackerearth.com/practice/",
-        "sec-ch-ua": '"Google Chrome";v="137", "Chromium";v="137", "Not/A)Brand";v="24"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-        "x-requested-with": "XMLHttpRequest",
-    }
-
-    cookies = {
-        "HE_UTS_ID_LP": "/practice/api/tracks/",
-        "HE_UTS_ID_CL": "600f3e4ded00418eb4c40fac4f96255bb98e3847b7ef46ba8f8f3dcd6dc6029a",
-        "HE_UTS_ID": "a24f9f1da58545b1ae970f0443417ee9f7aa3f5436a1453e80ffe9150ddd1e6d",
-        "csrfToken": "nEIsns3W0WMbqvZArgipVCTQM3fhYbZmXxKZ27aGMeWWGtSIgeiYv6rpKOcuugry",
-        "_gcl_au": "1.1.552004406.1750179835",
-        "_ga": "GA1.1.1062246621.1750179835",
-        "_fbp": "fb.1.1750179835244.64330841080370011",
-        "_ga_18S5HG42RB": "GS2.1.s1750179835$o1$g1$t1750179848$j47$l0$h1184859511",
-    }
-
-    try:
-        response = requests.get(url, headers=headers, cookies=cookies).json()
-        return "https://www.hackerearth.com" + response['url']
-    except Exception as e:
-        print(f"Error fetching HackerEarth daily challenge: {e}")
-        return None
 
 if __name__=='__main__':
     print(get_leetcode_daily_challenge())
     print(get_gfg_daily_challenge())
-    print(get_hackerearth_daily_challenge())
     
