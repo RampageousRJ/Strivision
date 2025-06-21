@@ -45,7 +45,8 @@ deployOCI:
 
 checkSanity:
     stage: sanity
-    before_script: sudo apt update && sudo apt install -y curl
+    image: ubuntu:latest
+    before_script:  apt-get update && apt-get install -y curl
     script:
         - echo "Running sanity check..."
         - STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${VM_IP_ADDRESS}:${VM_APP_PORT}/health)
