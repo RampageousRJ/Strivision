@@ -2,6 +2,7 @@ stages:
   - build
   - sync
   - deploy
+  - sanity
 
 image: python:slim-buster
 
@@ -40,4 +41,21 @@ deployOCI:
                 pm2 start "python3 app.py" --name strivision
             '
     only:
+        - main
+
+checkSanity:
+    stage: sanity
+    script:
+        - echo "Running sanity check..."
+        - STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${VM_IP_ADDRESS}:${VM_APP_PORT}/health)
+        - |
+            if [ "$STATUS" -ne 200 ]; then
+                echo "Sanity check failed! Expected 200, got $STATUS"
+                exit 1
+            else
+                echo "Sanity check passed!"
+            fi
+    needs:
+        - deployOCI
+    only:   
         - main
