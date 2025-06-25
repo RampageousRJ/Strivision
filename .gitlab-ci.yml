@@ -44,8 +44,11 @@ deployOCI:
                 rm -rf Strivision &&
                 git clone https://github.com/RampageousRJ/Strivision.git &&
                 cd Strivision &&
+                python3 -m venv virt
+                source virt/bin/activate
+                pip install -r requirements.txt
                 pm2 delete strivision &&
-                pm2 start "python3 app.py" --name strivision
+                pm2 start "source virt/bin/activate && python3 app.py" --name strivision
             '
     only:
         - main
